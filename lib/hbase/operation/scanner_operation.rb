@@ -1,10 +1,11 @@
 module HBase
   module Operation
     module ScannerOperation
-      def open_scanner(table_name, columns, start_row = nil, end_row = nil, timestamp = nil)
+      def open_scanner(table_name, columns, start_row = nil, stop_row = nil, timestamp = nil)
+        @client_method = 'open_scanner'
         begin
           request = Request::ScannerRequest.new(table_name)
-          scanner_id = Response::ScannerResponse.new(post(request.open(columns, start_row, end_row, timestamp))).get_scanner_id
+          scanner_id = Response::ScannerResponse.new(post(request.open(columns, start_row, stop_row, timestamp))).get_scanner_id
         rescue Net::ProtocolError => e
           if e.to_s.include?("TableNotFoundException")
             raise TableNotFoundError, "Table #{table_name} Not Found!"

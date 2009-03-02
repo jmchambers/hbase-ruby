@@ -6,7 +6,7 @@ module HBase
           request = Request::TableRequest.new(name)
           table_descriptor = Response::TableResponse.new(get(request.show)).parse
         rescue Net::ProtocolError => e
-          raise TableNotFoundError, "Table '#{name}' Not found"
+          raise TableNotFoundError, e.message
         end
       end
 

@@ -3,13 +3,11 @@ module HBase
     class ScannerResponse < BasicResponse
       def parse_content(raw_data)
         doc = REXML::Document.new(raw_data)
-        doc = doc.elements["rows"] if doc.elements["rows"] && doc.elements["rows"].has_elements?
-
         rows = []
-        doc.elements.each("row") do |row|
+        doc.elements["rows"].each do |row|
           row_name = row.elements["name"].text.strip.unpack("m").first
           columns = []
-          row.elements.each("column") do |col|
+          row.elements["columns"].each do |col|
             name = col.elements["name"].text.strip.unpack("m").first
             value = col.elements["value"].text.strip.unpack("m").first rescue nil
             timestamp = col.elements["timestamp"].text.strip.to_i
@@ -25,7 +23,7 @@ module HBase
       def get_scanner_id
         location = @raw_data['location']
         paths = location.split('/')
-        Model::Scanner.new(:table_name => paths[2], :scanner_id => paths[4])
+        Model::Scanner.new(:table_name => paths[1], :scanner_id => paths[3])
       end
     end
   end
